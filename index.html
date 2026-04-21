@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1117, #161b22, #1a1e2e);
+            color: #e6edf3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #58a6ff, #bc8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #8b949e;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .scoreboard {
+            display: flex;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .scoreboard div {
+            text-align: center;
+        }
+
+        .scoreboard .score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #58a6ff;
+        }
+
+        .arena {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            min-height: 120px;
+        }
+
+        .player-choice, .computer-choice {
+            font-size: 5rem;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #21262d;
+            border: 3px solid #30363d;
+            transition: all 0.3s ease;
+        }
+
+        .player-choice.win, .computer-choice.lose { border-color: #3fb950; box-shadow: 0 0 20px rgba(63,185,80,0.3); }
+        .player-choice.lose, .computer-choice.win { border-color: #f85149; box-shadow: 0 0 20px rgba(248,81,73,0.3); }
+        .player-choice.draw, .computer-choice.draw { border-color: #d29922; box-shadow: 0 0 20px rgba(210,153,34,0.3); }
+
+        .vs {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8b949e;
+        }
+
+        .result {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            min-height: 2rem;
+        }
+
+        .result.win { color: #3fb950; }
+        .result.lose { color: #f85149; }
+        .result.draw { color: #d29922; }
+
+        .choices {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .choice-btn {
+            font-size: 3rem;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #30363d;
+            background: #21262d;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .choice-btn:hover {
+            border-color: #58a6ff;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(88,166,255,0.3);
+        }
+
+        .choice-btn:active { transform: scale(0.95); }
+
+        .reset-btn {
+            padding: 0.6rem 2rem;
+            font-size: 1rem;
+            border: 1px solid #30363d;
+            background: #21262d;
+            color: #e6edf3;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset-btn:hover { background: #30363d; border-color: #58a6ff; }
+
+        .history {
+            margin-top: 2rem;
+            color: #8b949e;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .history-rounds {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+            max-width: 400px;
+        }
+
+        .history-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+
+        .history-dot.win { background: #3fb950; }
+        .history-dot.lose { background: #f85149; }
+        .history-dot.draw { background: #d29922; }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(20deg); }
+            75% { transform: rotate(-20deg); }
+        }
+
+        .shaking { animation: shake 0.4s ease; }
+    </style>
+</head>
+<body>
+    <h1>Rock Paper Scissors</h1>
+    <p class="subtitle">Choose your weapon!</p>
+
+    <div class="scoreboard">
+        <div>
+            <div>You</div>
+            <div class="score" id="player-score">0</div>
+        </div>
+        <div>
+            <div>Rounds</div>
+            <div class="score" id="rounds">0</div>
+        </div>
+        <div>
+            <div>Computer</div>
+            <div class="score" id="computer-score">0</div>
+        </div>
+    </div>
+
+    <div class="arena">
+        <div class="player-choice" id="player-display">❔</div>
+        <div class="vs">VS</div>
+        <div class="computer-choice" id="computer-display">❔</div>
+    </div>
+
+    <div class="result" id="result">&nbsp;</div>
+
+    <div class="choices">
+        <button class="choice-btn" data-choice="rock" title="Rock">🪨</button>
+        <button class="choice-btn" data-choice="paper" title="Paper">📄</button>
+        <button class="choice-btn" data-choice="scissors" title="Scissors">✂️</button>
+    </div>
+
+    <button class="reset-btn" id="reset-btn">Reset Game</button>
+
+    <div class="history">
+        <div>Match History</div>
+        <div class="history-rounds" id="history"></div>
+    </div>
+
+    <script>
+        const CHOICES = ['rock', 'paper', 'scissors'];
+        const EMOJIS = { rock: '🪨', paper: '📄', scissors: '✂️' };
+
+        const state = {
+            playerScore: 0,
+            computerScore: 0,
+            rounds: 0,
+            history: []
+        };
+
+        const playerDisplay = document.getElementById('player-display');
+        const computerDisplay = document.getElementById('computer-display');
+        const resultEl = document.getElementById('result');
+        const playerScoreEl = document.getElementById('player-score');
+        const computerScoreEl = document.getElementById('computer-score');
+        const roundsEl = document.getElementById('rounds');
+        const historyEl = document.getElementById('history');
+
+        function getComputerChoice() {
+            return CHOICES[Math.floor(Math.random() * CHOICES.length)];
+        }
+
+        function determineWinner(player, computer) {
+            if (player === computer) return 'draw';
+            if (
+                (player === 'rock' && computer === 'scissors') ||
+                (player === 'paper' && computer === 'rock') ||
+                (player === 'scissors' && computer === 'paper')
+            ) return 'win';
+            return 'lose';
+        }
+
+        function playRound(playerChoice) {
+            const computerChoice = getComputerChoice();
+            const result = determineWinner(playerChoice, computerChoice);
+
+            state.rounds++;
+            state.history.push(result);
+            if (result === 'win') state.playerScore++;
+            if (result === 'lose') state.computerScore++;
+
+            // Update displays
+            playerDisplay.textContent = EMOJIS[playerChoice];
+            computerDisplay.textContent = EMOJIS[computerChoice];
+
+            // Animate
+            playerDisplay.classList.add('shaking');
+            computerDisplay.classList.add('shaking');
+            setTimeout(() => {
+                playerDisplay.classList.remove('shaking');
+                computerDisplay.classList.remove('shaking');
+            }, 400);
+
+            // Result styling
+            playerDisplay.className = 'player-choice ' + result;
+            computerDisplay.className = 'computer-choice ' + (result === 'win' ? 'lose' : result === 'lose' ? 'win' : 'draw');
+
+            const messages = {
+                win: `You win! ${EMOJIS[playerChoice]} beats ${EMOJIS[computerChoice]}`,
+                lose: `You lose! ${EMOJIS[computerChoice]} beats ${EMOJIS[playerChoice]}`,
+                draw: `Draw! Both chose ${EMOJIS[playerChoice]}`
+            };
+            resultEl.textContent = messages[result];
+            resultEl.className = 'result ' + result;
+
+            // Update scores
+            playerScoreEl.textContent = state.playerScore;
+            computerScoreEl.textContent = state.computerScore;
+            roundsEl.textContent = state.rounds;
+
+            // Update history
+            const dot = document.createElement('div');
+            dot.className = 'history-dot ' + result;
+            dot.title = `Round ${state.rounds}: ${result}`;
+            historyEl.appendChild(dot);
+        }
+
+        // Event listeners
+        document.querySelectorAll('.choice-btn').forEach(btn => {
+            btn.addEventListener('click', () => playRound(btn.dataset.choice));
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            state.playerScore = 0;
+            state.computerScore = 0;
+            state.rounds = 0;
+            state.history = [];
+            playerScoreEl.textContent = '0';
+            computerScoreEl.textContent = '0';
+            roundsEl.textContent = '0';
+            playerDisplay.textContent = '❔';
+            computerDisplay.textContent = '❔';
+            playerDisplay.className = 'player-choice';
+            computerDisplay.className = 'computer-choice';
+            resultEl.textContent = '\u00a0';
+            resultEl.className = 'result';
+            historyEl.innerHTML = '';
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            const keyMap = { '1': 'rock', '2': 'paper', '3': 'scissors', r: 'rock', p: 'paper', s: 'scissors' };
+            if (keyMap[e.key.toLowerCase()]) playRound(keyMap[e.key.toLowerCase()]);
+        });
+    </script>
+</body>
+</html>
